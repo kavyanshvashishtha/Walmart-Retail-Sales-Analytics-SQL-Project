@@ -10,11 +10,11 @@ A complete end-to-end SQL analysis of Walmart's weekly store sales data across 4
 
 The dataset contains three tables:
 
-| Table | Rows | Description |
-|---|---|---|
-| stores | 45 | Store type (A/B/C) and size in sq ft |
-| features | 8,190 | Weekly temperature, fuel price, CPI, unemployment, markdowns |
-| sales | 4,21,570 | Weekly sales per store per department (Feb 2010 – Oct 2012) |
+| Table    | Rows     | Description                                                  |
+| -------- | -------- | ------------------------------------------------------------ |
+| stores   | 45       | Store type (A/B/C) and size in sq ft                         |
+| features | 8,190    | Weekly temperature, fuel price, CPI, unemployment, markdowns |
+| sales    | 4,21,570 | Weekly sales per store per department (Feb 2010 – Oct 2012)  |
 
 Walmart runs promotional markdown events before major holidays — Super Bowl, Labour Day, Thanksgiving, and Christmas. Holiday weeks are weighted 5x higher in business importance than normal weeks.
 
@@ -32,36 +32,36 @@ The project addresses three core business questions:
 
 ## Project Structure
 
-```
 walmart-retail-sql/
 │
-├── walmart_retail_analytics.sql   # Complete SQL file (all 5 sections)
-├── README.md                      # This file
+├── walmart_retail_analytics.sql # Complete SQL file (all 5 sections)
+├── README.md # This file
 │
 └── datasets/
-    ├── stores_dataset.csv
-    ├── features_dataset.csv
-    └── sales_dataset.csv
-```
+├── stores_dataset.csv
+├── features_dataset.csv
+└── sales_dataset.csv
+
 
 ---
 
 ## How to Run
 
 **Step 1** — Open MySQL Workbench and create the database:
-```sql
+
 CREATE DATABASE walmart_retail;
 USE walmart_retail;
-```
+
 
 **Step 2** — Run Section 1 of the SQL file to create the three tables.
 
 **Step 3** — Copy the three CSV files into your MySQL secure upload folder:
-```
+
 C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/
-```
+
 
 **Step 4** — Run Section 2 to load data. The queries handle:
+
 - `STR_TO_DATE` for DD/MM/YYYY date format conversion
 - `NULLIF` to convert NA strings to proper NULLs in markdown and CPI columns
 - `LINES TERMINATED BY '\r\n'` to fix Windows line endings on the sales file
@@ -74,19 +74,19 @@ C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/
 
 ## SQL Concepts Used
 
-| Concept | Where used |
-|---|---|
-| `JOIN` | Linking sales ↔ stores ↔ features |
-| `CTE` (WITH clause) | Store revenue ranking, YoY growth |
-| `CASE` | Holiday segmentation, unemployment bands |
-| `RANK()`, `DENSE_RANK()` | Store performance ranking within type and overall |
-| `LAG()` | Year-over-year growth calculation |
-| `NULLIF` | Handling markdown and CPI NULLs, safe division |
-| `STR_TO_DATE` | Date format conversion on load |
-| `GROUP BY`, `HAVING` | Aggregations across stores and departments |
-| `UNION ALL` | Markdown comparison across 5 columns |
-| `CREATE VIEW` | Reusable store summary and holiday impact snapshots |
-| `STORED PROCEDURE` | On-demand store and markdown reports |
+| Concept                  | Where used                                          |
+| ------------------------ | --------------------------------------------------- |
+| `JOIN`                   | Linking sales ↔ stores ↔ features                   |
+| `CTE` (WITH clause)      | Store revenue ranking, YoY growth                   |
+| `CASE`                   | Holiday segmentation, unemployment bands            |
+| `RANK()`, `DENSE_RANK()` | Store performance ranking within type and overall   |
+| `LAG()`                  | Year-over-year growth calculation                   |
+| `NULLIF`                 | Handling markdown and CPI NULLs, safe division      |
+| `STR_TO_DATE`            | Date format conversion on load                      |
+| `GROUP BY`, `HAVING`     | Aggregations across stores and departments          |
+| `UNION ALL`              | Markdown comparison across 5 columns                |
+| `CREATE VIEW`            | Reusable store summary and holiday impact snapshots |
+| `STORED PROCEDURE`       | On-demand store and markdown reports                |
 
 ---
 
@@ -94,11 +94,11 @@ C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/
 
 **Store Performance**
 
-Store 20 is the top performer with $30.1 crore in total revenue and $29,627 average weekly sales, despite not being the largest store by size. Store 4 follows closely at $29.9 crore. Store 33 is the weakest — generating only $3.7 crore total, nearly 8x less than Store 20, despite being classified as a Type A store. This mismatch between store type and revenue is a red flag worth investigating. Store 10 is a standout Type B store, ranking 6th overall and outperforming several Type A stores.
+Store 20 is the top performer with $30.1 million in total revenue and $29,627 average weekly sales, despite not being the largest store by size. Store 4 follows closely at $29.9 million. Store 33 is the weakest — generating only $3.7 million total, nearly 8x less than Store 20, despite being classified as a Type A store. This mismatch between store type and revenue is a red flag worth investigating. Store 10 is a standout Type B store, ranking 6th overall and outperforming several Type A stores.
 
 **Department Performance**
 
-Department 92 is the highest revenue generator across all 45 stores at $48.3 crore with an average weekly sales of $75,204 — roughly 5x the company average. Department 95 follows at $44.9 crore. All top 10 departments are present in every one of the 45 stores, confirming these are core categories that must be protected in inventory planning and markdown campaigns.
+Department 92 is the highest revenue generator across all 45 stores at $48.3 million with an average weekly sales of $75,204 — roughly 5x the company average. Department 95 follows at $44.9 million. All top 10 departments are present in every one of the 45 stores, confirming these are core categories that must be protected in inventory planning and markdown campaigns.
 
 **Holiday Impact**
 
@@ -125,22 +125,22 @@ Stores in medium unemployment regions (7–10%) generate the highest average wee
 ## Reusable Objects
 
 **Views**
-```sql
+
 -- Quick snapshot of all 45 stores
 SELECT * FROM vw_store_summary ORDER BY total_revenue DESC;
 
 -- Holiday performance across stores
 SELECT * FROM vw_holiday_impact ORDER BY holiday_lift_pct DESC;
-```
+
 
 **Stored Procedures**
-```sql
+
 -- Full performance report for any store
 CALL sp_store_report(20);
 
 -- Markdown effectiveness for any store
 CALL sp_markdown_report(20);
-```
+
 
 ---
 
